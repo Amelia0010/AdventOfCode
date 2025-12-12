@@ -2,7 +2,7 @@ module Main where
 import DayOne
 
 runDay :: String -> IO ()
-runDay "1" = DayOne.run
+runDay "1" = DayOne.calculate
 runDay day = putStrLn ("Invalid Day: " ++ day)
 
 main :: IO ()

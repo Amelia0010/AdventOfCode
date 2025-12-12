@@ -1,6 +1,6 @@
 module DayOne where
 
-run :: IO ()
-run = do
+calculate :: IO ()
+calculate = do
     contents <- readFile "1.txt"
     putStrLn contents

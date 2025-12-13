@@ -3,17 +3,16 @@ module DayOne where
 calculate :: IO ()
 calculate = do
     contents <- readFile "1.txt"
-    putStrLn (show (calculateZeroCount (lines contents) 50))
+    putStrLn ("Part one: " ++ show (calculateZeroCount (lines contents) 50))
 
 calculateZeroCount :: [String] -> Int -> Int
 calculateZeroCount [] _ = 0
-calculateZeroCount operations dial
-    | nextDial == 0 = recursiveZeros + 1
+calculateZeroCount (operation:operations) dial
+    | nextDial == 0 = 1 + recursiveZeros
     | otherwise = recursiveZeros
     where
-        operation = head operations
         nextDial = calculateNextDial operation dial
-        recursiveZeros = calculateZeroCount (tail operations) nextDial
+        recursiveZeros = calculateZeroCount operations nextDial
 
 
 calculateNextDial :: String -> Int -> Int

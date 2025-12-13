@@ -7,21 +7,17 @@ calculate = do
 
 maxJoltages :: [String] -> Int
 maxJoltages [] = 0
-maxJoltages (joltage:joltages) = (maxJoltage 0 0 joltage) + (maxJoltages joltages)
+maxJoltages (joltage:joltages) = (maxJoltage '0' '0' joltage) + (maxJoltages joltages)
 
-maxJoltage :: Int -> Int -> [Char] -> Int
+maxJoltage :: Char -> Char -> [Char] -> Int
 maxJoltage _ _ [] = 0
-maxJoltage maxStart maxEnd (joltageStr:[]) = 
+maxJoltage maxStart maxEnd (joltage:[]) = 
     combineDigits maxStart (max maxEnd joltage)
-    where
-        joltage = read [joltageStr]
 
-maxJoltage maxStart maxEnd (joltageStr:joltages)
-    | joltage > maxStart = maxJoltage joltage 0 joltages
+maxJoltage maxStart maxEnd (joltage:joltages)
+    | joltage > maxStart = maxJoltage joltage '0' joltages
     | joltage > maxEnd = maxJoltage maxStart joltage joltages
     | otherwise = maxJoltage maxStart maxEnd joltages
-    where
-        joltage = read [joltageStr]
 
-combineDigits :: Int -> Int -> Int
-combineDigits first second = read ((show first) ++ (show second))
+combineDigits :: Char -> Char -> Int
+combineDigits first second = read ([first] ++ [second])

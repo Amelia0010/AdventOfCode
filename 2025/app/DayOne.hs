@@ -1,26 +1,50 @@
 module DayOne where
 
+dialStart :: Int
+dialStart = 50
+
 calculate :: IO ()
 calculate = do
     contents <- readFile "1.txt"
-    putStrLn ("Part one: " ++ show (calculateZeroCount (lines contents) 50))
+    putStrLn ("Part one: " ++ show (calculateStopAtZeroCount (lines contents) dialStart))
+    putStrLn ("Part two: " ++ show (calculatePassByZeroCount (lines contents) dialStart))
 
-calculateZeroCount :: [String] -> Int -> Int
-calculateZeroCount [] _ = 0
-calculateZeroCount (operation:operations) dial
+calculateStopAtZeroCount :: [String] -> Int -> Int
+calculateStopAtZeroCount [] _ = 0
+calculateStopAtZeroCount (operation:operations) dial
     | nextDial == 0 = 1 + recursiveZeros
     | otherwise = recursiveZeros
     where
-        nextDial = calculateNextDial operation dial
-        recursiveZeros = calculateZeroCount operations nextDial
+        move = parseMove operation
+        nextDial = calculateNextDial dial move
+        recursiveZeros = calculateStopAtZeroCount operations nextDial
 
+calculatePassByZeroCount :: [String] -> Int -> Int
+calculatePassByZeroCount [] _ = 0
+calculatePassByZeroCount (operation:operations) dial =
+    passCount + (calculatePassByZeroCount operations nextDial)
+    where
+        nextDial = calculateNextDial dial move
+        move = parseMove operation
+        passCount = passByZeroCount dial move
 
-calculateNextDial :: String -> Int -> Int
-calculateNextDial operation dial =
-    (dial + trueAngle) `mod` 100 
+calculateNextDial :: Int -> Int -> Int
+calculateNextDial dial move =
+    (dial + move) `mod` 100 
+
+parseMove :: String -> Int
+parseMove [] = 0
+parseMove (direction:angleStr)
+    | direction == 'R' = angle
+    | otherwise = -angle
     where 
-        direction = head operation
-        angle = read (tail operation)
-        trueAngle
-            | direction == 'R' = angle
-            | otherwise = -angle
+        angle = read angleStr
+
+passByZeroCount :: Int -> Int -> Int
+passByZeroCount dial move
+    | dial == 0 = abs(move) `div` 100
+    | nextDial == 0 = 1
+    | move > 0 = nextDial `div` 100
+    | otherwise = abs((nextDial -1) `div` 100)
+    where
+        nextDial = dial + move
